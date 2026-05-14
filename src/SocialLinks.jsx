@@ -3,7 +3,7 @@ import { useLang } from './LangContext'
 import { t } from './i18n'
 import './SocialLinks.css'
 
-const PHONE = '+7 (999) 123-45-67'
+const PHONE = '+7 (962) 888-14-37'
 const EMAIL = 'bogdankabanovprof@gmail.com'
 
 export default function SocialLinks() {
