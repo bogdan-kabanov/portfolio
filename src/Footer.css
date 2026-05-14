@@ -1,0 +1,151 @@
+.footer {
+  width: 100%;
+  padding: 40px 40px 32px;
+  background: #050505;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer__name {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.footer__role {
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer__center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer__link {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer__link:hover {
+  color: #fff;
+}
+
+.footer__divider {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.footer__email {
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.footer__right {
+  display: flex;
+  align-items: center;
+}
+
+.footer__copy {
+  font-family: system-ui, sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 32px 20px 24px;
+  }
+
+  .footer__inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .footer__name {
+    font-size: 0.95rem;
+  }
+
+  .footer__role,
+  .footer__link,
+  .footer__email {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 24px 16px 20px;
+  }
+
+  .footer__center {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .footer__divider {
+    display: none;
+  }
+
+  .footer__name {
+    font-size: 0.9rem;
+  }
+
+  .footer__role,
+  .footer__link,
+  .footer__email {
+    font-size: 0.8rem;
+  }
+
+  .footer__copy {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .footer {
+    padding: 20px 12px 16px;
+  }
+
+  .footer__inner {
+    gap: 10px;
+  }
+
+  .footer__name {
+    font-size: 0.85rem;
+  }
+
+  .footer__role,
+  .footer__link,
+  .footer__email {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+
+  .footer__copy {
+    font-size: 0.7rem;
+  }
+}

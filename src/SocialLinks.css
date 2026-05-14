@@ -1,0 +1,246 @@
+.social-links {
+  position: fixed;
+  top: 28px;
+  left: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 100;
+  align-items: flex-start;
+}
+
+.social-links__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: all 0.3s;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.social-links__item:hover {
+  border-color: #fff;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* Phone expandable — opens on hover */
+.social-links__phone {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
+  max-width: 40px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.social-links__phone .social-links__item {
+  border: none;
+  width: 38px;
+  height: 38px;
+}
+
+.social-links__phone:hover {
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.social-links__phone-number {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  padding-right: 16px;
+  padding-left: 4px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.3s 0.15s, transform 0.3s 0.15s;
+}
+
+.social-links__phone:hover .social-links__phone-number {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Email expandable — same style as phone */
+.social-links__email {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
+  max-width: 40px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.social-links__email .social-links__item {
+  border: none;
+  width: 38px;
+  height: 38px;
+}
+
+.social-links__email:hover {
+  max-width: 340px;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.social-links__email-text {
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  padding-right: 16px;
+  padding-left: 4px;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.3s 0.15s, transform 0.3s 0.15s;
+}
+
+.social-links__email:hover .social-links__email-text {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .social-links {
+    top: 16px;
+    left: 16px;
+    gap: 10px;
+  }
+
+  .social-links__item {
+    width: 36px;
+    height: 36px;
+  }
+
+  .social-links__phone,
+  .social-links__email {
+    height: 36px;
+    max-width: 36px;
+  }
+
+  .social-links__phone .social-links__item,
+  .social-links__email .social-links__item {
+    width: 34px;
+    height: 34px;
+  }
+
+  .social-links__phone-number,
+  .social-links__email-text {
+    font-size: 12px;
+  }
+
+  .social-links__phone:hover {
+    max-width: 240px;
+  }
+
+  .social-links__email:hover {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .social-links {
+    top: 12px;
+    left: 12px;
+    gap: 8px;
+  }
+
+  .social-links__item {
+    width: 32px;
+    height: 32px;
+  }
+
+  .social-links__phone,
+  .social-links__email {
+    height: 32px;
+    max-width: 32px;
+  }
+
+  .social-links__phone .social-links__item,
+  .social-links__email .social-links__item {
+    width: 30px;
+    height: 30px;
+  }
+
+  .social-links__phone-number,
+  .social-links__email-text {
+    font-size: 11px;
+    padding-right: 12px;
+  }
+
+  .social-links__phone:hover {
+    max-width: 200px;
+  }
+
+  .social-links__email:hover {
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 320px) {
+  .social-links {
+    top: 10px;
+    left: 10px;
+    gap: 6px;
+  }
+
+  .social-links__item {
+    width: 28px;
+    height: 28px;
+  }
+
+  .social-links__phone,
+  .social-links__email {
+    height: 28px;
+    max-width: 28px;
+  }
+
+  .social-links__phone .social-links__item,
+  .social-links__email .social-links__item {
+    width: 26px;
+    height: 26px;
+  }
+
+  .social-links__phone-number,
+  .social-links__email-text {
+    font-size: 10px;
+    padding-right: 10px;
+  }
+
+  .social-links__phone:hover {
+    max-width: 180px;
+  }
+
+  .social-links__email:hover {
+    max-width: 220px;
+  }
+}

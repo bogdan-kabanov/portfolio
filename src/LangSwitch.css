@@ -1,0 +1,81 @@
+.lang-switch {
+  position: fixed;
+  top: 28px;
+  right: 80px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 100;
+}
+
+.lang-switch button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.lang-switch button:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.lang-switch button.active {
+  color: #fff;
+}
+
+.lang-switch__divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lang-switch {
+    top: 16px;
+    right: 44px;
+  }
+
+  .lang-switch button,
+  .lang-switch__divider {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lang-switch {
+    top: 14px;
+    right: 36px;
+  }
+
+  .lang-switch button,
+  .lang-switch__divider {
+    font-size: 12px;
+  }
+
+  .lang-switch button {
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 320px) {
+  .lang-switch {
+    top: 12px;
+    right: 30px;
+    gap: 4px;
+  }
+
+  .lang-switch button,
+  .lang-switch__divider {
+    font-size: 11px;
+  }
+
+  .lang-switch button {
+    padding: 2px 5px;
+  }
+}
