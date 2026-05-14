@@ -28,7 +28,7 @@ export default function SocialLinks() {
   return (
     <aside className="social-links" aria-label={lang === 'ru' ? 'Контакты' : 'Contacts'}>
       <a
-        href="https://t.me/bogdan_kabanova"
+        href="https://t.me/bogdan_kabanov"
         target="_blank"
         rel="noopener noreferrer"
         className="social-links__item"

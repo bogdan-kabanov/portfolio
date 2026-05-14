@@ -27,7 +27,7 @@ export default function Footer() {
 
         <address className="footer__center">
           <a
-            href="https://t.me/bogdan_kabanova"
+            href="https://t.me/bogdan_kabanov"
             target="_blank"
             rel="noopener noreferrer"
             className="footer__link"
