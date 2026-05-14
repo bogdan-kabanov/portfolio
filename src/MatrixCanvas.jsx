@@ -207,20 +207,25 @@ export default function MatrixCanvas() {
 
         const currentLang = langRef.current
 
+        // Responsive font sizes
+        const nameFontSize = Math.min(56, w * 0.08)
+        const greetingFontSize = Math.min(24, w * 0.04)
+        const roleFontSize = Math.min(20, w * 0.035)
+
         // greeting
-        ctx.font = '300 24px system-ui, sans-serif'
+        ctx.font = `300 ${greetingFontSize}px system-ui, sans-serif`
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-        ctx.fillText(t(currentLang, 'greeting'), w / 2, centerY - 50)
+        ctx.fillText(t(currentLang, 'greeting'), w / 2, centerY - nameFontSize * 0.8)
 
         // name
-        ctx.font = 'bold 56px system-ui, sans-serif'
+        ctx.font = `bold ${nameFontSize}px system-ui, sans-serif`
         ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'
-        ctx.fillText(t(currentLang, 'name'), w / 2, centerY + 10)
+        ctx.fillText(t(currentLang, 'name'), w / 2, centerY)
 
         // role
-        ctx.font = '300 20px system-ui, sans-serif'
+        ctx.font = `300 ${roleFontSize}px system-ui, sans-serif`
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-        ctx.fillText(t(currentLang, 'role'), w / 2, centerY + 55)
+        ctx.fillText(t(currentLang, 'role'), w / 2, centerY + nameFontSize * 0.8)
 
         ctx.textAlign = 'left'
         ctx.textBaseline = 'top'

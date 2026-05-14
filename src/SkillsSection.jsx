@@ -132,14 +132,19 @@ export default function SkillsSection() {
 
     function buildSkillNodes() {
       const skills = skillsRef.current
-      const isMobile = w < 768
-      const radius = isMobile
-        ? Math.min(w, h) * 0.32
-        : Math.min(w, h) * 0.34
+      const isMobile = w < 600
+      const isSmall = w < 400
+      const radius = isSmall
+        ? Math.min(w, h) * 0.28
+        : isMobile
+          ? Math.min(w, h) * 0.30
+          : Math.min(w, h) * 0.34
       const cx = w / 2
       // Account for category buttons at the bottom
       const buttonsArea = isMobile ? 60 : 80
       const cy = (h - buttonsArea) / 2
+
+      const nodeScale = isSmall ? 0.6 : isMobile ? 0.75 : 1
 
       nodes = skills.map((s, i) => {
         const angle = (i / skills.length) * Math.PI * 2 - Math.PI / 2
@@ -155,7 +160,8 @@ export default function SkillsSection() {
           vx: 0,
           vy: 0,
           phase: Math.random() * Math.PI * 2,
-          radius: 4 + s.level / 25,
+          radius: (4 + s.level / 25) * nodeScale,
+          scale: nodeScale,
         }
       })
     }
@@ -298,7 +304,8 @@ export default function SkillsSection() {
         ctx.stroke()
 
         // label always visible, bigger when hovered
-        ctx.font = `${isHovered ? 600 : 400} ${isHovered ? 14 : 12}px system-ui, sans-serif`
+        const labelSize = isHovered ? 14 * (n.scale || 1) : 12 * (n.scale || 1)
+        ctx.font = `${isHovered ? 600 : 400} ${Math.round(labelSize)}px system-ui, sans-serif`
         ctx.fillStyle = isHovered ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.6)'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'top'
@@ -306,7 +313,8 @@ export default function SkillsSection() {
 
         // level badge on hover
         if (isHovered) {
-          ctx.font = `600 11px system-ui, sans-serif`
+          const badgeSize = Math.round(11 * (n.scale || 1))
+          ctx.font = `600 ${badgeSize}px system-ui, sans-serif`
           ctx.fillStyle = 'rgba(255,255,255,0.6)'
           ctx.fillText(n.level + '%', n.x, n.y + n.radius * 2.5 + 26)
         }
