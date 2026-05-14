@@ -16,6 +16,12 @@ import { t } from './i18n'
 
 const projectsData = [
   {
+    titleKey: 'krotminerTitle',
+    descKey: 'krotminerDesc',
+    image: null,
+    tech: ['React', 'TypeScript', 'Node.js', 'WebSocket', 'Telegram Mini App', 'Canvas API', 'PostgreSQL', 'REST API', 'CSS Animations', 'Docker'],
+  },
+  {
     titleKey: 'daoTitle',
     descKey: 'daoDesc',
     image: null,

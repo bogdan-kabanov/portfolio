@@ -28,6 +28,12 @@ const experienceData = [
     duration: '1',
     durationKey: 'year1',
   },
+  {
+    company: 'KrotMiner',
+    roleKey: 'expKrotminerRole',
+    duration: '1',
+    durationKey: 'year1',
+  },
 ]
 
 export default function ExperienceSection() {

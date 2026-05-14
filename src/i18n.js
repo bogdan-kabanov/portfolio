@@ -35,6 +35,7 @@ const translations = {
     expUnion2Role: 'Fullstack-разработчик',
     expBastaxiRole: 'Fullstack-разработчик',
     expBlockmindRole: 'Fullstack-разработчик',
+    expKrotminerRole: 'Fullstack-разработчик',
     // a11y / misc
     close: 'Закрыть',
     phoneAria: 'Телефон',
@@ -85,6 +86,8 @@ const translations = {
     projInternal: 'Внутренние инструменты',
     projDao: 'DAO Crypto Wallet',
     // projects
+    krotminerTitle: 'KrotMiner — Онлайн-казино & Тапалка',
+    krotminerDesc: 'Полноценное онлайн-казино в формате Telegram Mini App с интегрированной тапалкой в стиле Hamster Kombat. Разработал всё приложение целиком: серверную часть с WebSocket для реал-тайм игровых сессий, сложную графику на Canvas API (анимации выигрышей, слоты, рулетка), систему онлайн-подсчёта ставок и выплат, тапалку с прогрессией и бустерами, анимации кликов и визуальные эффекты. Реализовал антифрод-систему, лидерборды, реферальную программу и интеграцию с платёжными системами.',
     daoTitle: 'DAO Crypto Wallet — ZKP Auth',
     daoDesc: 'Децентрализованный криптокошелёк с аутентификацией на основе Zero-Knowledge Proofs (ZKP). Разработал систему входа без передачи приватных данных серверу — пользователь доказывает владение ключом, не раскрывая его. Реализация включала генерацию zk-SNARK доказательств на клиенте, верификацию на бэкенде, интеграцию с блокчейном для управления DAO-голосованиями и мультисиг-транзакциями. Сложность: криптографические примитивы, оптимизация генерации proof на мобильных устройствах, обеспечение безопасности без компромиссов в UX.',
     bastaxiTitle: 'BASTAXI — Админ-панель',
@@ -134,6 +137,7 @@ const translations = {
     expUnion2Role: 'Fullstack Developer',
     expBastaxiRole: 'Fullstack Developer',
     expBlockmindRole: 'Fullstack Developer',
+    expKrotminerRole: 'Fullstack Developer',
     // a11y / misc
     close: 'Close',
     phoneAria: 'Phone',
@@ -184,6 +188,8 @@ const translations = {
     projInternal: 'Internal tools',
     projDao: 'DAO Crypto Wallet',
     // projects
+    krotminerTitle: 'KrotMiner — Online Casino & Tap Game',
+    krotminerDesc: 'Full-featured online casino as a Telegram Mini App with an integrated tap game inspired by Hamster Kombat. Built the entire application: server-side with WebSocket for real-time game sessions, complex Canvas API graphics (win animations, slots, roulette), real-time bet calculation and payout system, tap game with progression and boosters, click animations and visual effects. Implemented anti-fraud system, leaderboards, referral program and payment system integration.',
     daoTitle: 'DAO Crypto Wallet — ZKP Auth',
     daoDesc: 'Decentralized crypto wallet with Zero-Knowledge Proof (ZKP) authentication. Built a login system that never exposes private data to the server — the user proves key ownership without revealing it. Implementation included client-side zk-SNARK proof generation, backend verification, blockchain integration for DAO voting and multisig transactions. Complexity: cryptographic primitives, mobile proof generation optimization, security without UX compromises.',
     bastaxiTitle: 'BASTAXI — Admin Panel',
