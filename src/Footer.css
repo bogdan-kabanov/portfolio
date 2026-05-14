@@ -60,6 +60,15 @@
   font-family: system-ui, sans-serif;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.6);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.footer__email:hover {
+  color: #fff;
 }
 
 .footer__right {

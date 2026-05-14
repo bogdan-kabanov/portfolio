@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLang } from './LangContext'
 import { t } from './i18n'
 import './Footer.css'
@@ -7,6 +8,14 @@ const EMAIL = 'bogdankabanovprof@gmail.com'
 export default function Footer() {
   const { lang } = useLang()
   const year = new Date().getFullYear()
+  const [copied, setCopied] = useState(false)
+
+  function handleCopyEmail() {
+    navigator.clipboard.writeText(EMAIL).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   return (
     <footer className="footer" role="contentinfo">
@@ -26,7 +35,9 @@ export default function Footer() {
             Telegram
           </a>
           <span className="footer__divider" aria-hidden="true">·</span>
-          <span className="footer__email">{EMAIL}</span>
+          <button type="button" className="footer__email" onClick={handleCopyEmail}>
+            {copied ? t(lang, 'copied') : EMAIL}
+          </button>
         </address>
 
         <div className="footer__right">
