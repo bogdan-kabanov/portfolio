@@ -27,6 +27,15 @@ export default function Footer() {
 
         <address className="footer__center">
           <a
+            href="https://github.com/bogdan-kabanov"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer__link"
+          >
+            GitHub
+          </a>
+          <span className="footer__divider" aria-hidden="true">·</span>
+          <a
             href="https://t.me/bogdan_kabanov"
             target="_blank"
             rel="noopener noreferrer"

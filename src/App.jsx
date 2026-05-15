@@ -10,6 +10,7 @@ import CustomCursor from './CustomCursor'
 import SkillsSection from './SkillsSection'
 import LangSwitch from './LangSwitch'
 import ExperienceSection from './ExperienceSection'
+import GitHubRepos from './GitHubRepos'
 import Footer from './Footer'
 import { useLang } from './LangContext'
 import { t } from './i18n'
@@ -132,6 +133,8 @@ function App() {
         </section>
 
         <SkillsSection />
+
+        <GitHubRepos />
 
         <ExperienceSection />
       </main>

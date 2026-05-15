@@ -30,8 +30,8 @@ export default function CustomCursor() {
     function animate() {
       const dx = mouseX - ringX
       const dy = mouseY - ringY
-      ringX += dx * 0.12
-      ringY += dy * 0.12
+      ringX += dx * 0.25
+      ringY += dy * 0.25
       ring.style.left = ringX + 'px'
       ring.style.top = ringY + 'px'
       requestAnimationFrame(animate)

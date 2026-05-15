@@ -12,6 +12,7 @@ export default function Pagination() {
     { id: 'hero', labelKey: 'navHome' },
     { id: 'projects', labelKey: 'navProjects' },
     { id: 'skills', labelKey: 'navSkills' },
+    { id: 'github', labelKey: 'navGithub' },
     { id: 'experience', labelKey: 'navExperience' },
   ]
 
@@ -25,8 +26,10 @@ export default function Pagination() {
         setActive(1)
       } else if (scrollY < vh * 2.5) {
         setActive(2)
-      } else {
+      } else if (scrollY < vh * 3.5) {
         setActive(3)
+      } else {
+        setActive(4)
       }
     }
     window.addEventListener('scroll', onScroll)

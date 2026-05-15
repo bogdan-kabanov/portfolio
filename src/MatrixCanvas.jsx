@@ -6,14 +6,72 @@ const MOUSE_RADIUS = 120
 const DOT_SPACING = 30
 const DOT_BASE_RADIUS = 1.2
 
+// GitHub username
+const GITHUB_USERNAME = 'bogdan-kabanov'
+
 export default function MatrixCanvas() {
   const canvasRef = useRef(null)
   const { lang, setLang } = useLang()
   const langRef = useRef(lang)
+  const githubDataRef = useRef(null) // { weeks: [[day0, day1, ...day6], ...], maxCount }
 
   useEffect(() => {
     langRef.current = lang
   }, [lang])
+
+  // Fetch GitHub contribution data
+  useEffect(() => {
+    fetchGitHubContributions()
+  }, [])
+
+  async function fetchGitHubContributions() {
+    try {
+      // Use GitHub's contribution calendar via the public events API
+      // We'll fetch the contribution graph from the profile page SVG
+      const response = await fetch(
+        `https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`
+      )
+      if (!response.ok) throw new Error('Failed to fetch')
+      const data = await response.json()
+
+      // data.contributions is an array of { date, count, level }
+      // We need to organize it into weeks (columns) x days (rows)
+      const contributions = data.contributions || []
+
+      // Group by week
+      const weeks = []
+      let currentWeek = []
+
+      for (let i = 0; i < contributions.length; i++) {
+        const date = new Date(contributions[i].date)
+        const dayOfWeek = date.getDay() // 0=Sun, 6=Sat
+
+        if (dayOfWeek === 0 && currentWeek.length > 0) {
+          weeks.push(currentWeek)
+          currentWeek = []
+        }
+        currentWeek.push(contributions[i].count)
+      }
+      if (currentWeek.length > 0) {
+        weeks.push(currentWeek)
+      }
+
+      const maxCount = Math.max(1, ...contributions.map((c) => c.count))
+
+      githubDataRef.current = { weeks, maxCount }
+    } catch (err) {
+      // Fallback: generate mock data so the visual still works
+      const weeks = []
+      for (let w = 0; w < 52; w++) {
+        const week = []
+        for (let d = 0; d < 7; d++) {
+          week.push(Math.random() < 0.3 ? 0 : Math.floor(Math.random() * 12))
+        }
+        weeks.push(week)
+      }
+      githubDataRef.current = { weeks, maxCount: 12 }
+    }
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -68,17 +126,13 @@ export default function MatrixCanvas() {
 
       for (let r = 0; r < rowsCount; r++) {
         for (let c = 0; c < colsCount; c++) {
-          // Pre-calculate scatter direction for each dot (from center outward)
           const bx = c * DOT_SPACING
           const by = r * DOT_SPACING
           const cx = w / 2
           const cy = h / 2
-          const sdx = bx - cx
-          const sdy = by - cy
-          const sDist = Math.sqrt(sdx * sdx + sdy * sdy) || 1
-          // Normalized direction + random variation
-          const angle = Math.atan2(sdy, sdx) + (Math.random() - 0.5) * 0.4
-          const scatterDist = 800 + Math.random() * 600 // how far they fly
+          const angle =
+            Math.atan2(by - cy, bx - cx) + (Math.random() - 0.5) * 0.4
+          const scatterDist = 800 + Math.random() * 600
 
           dots.push({
             baseX: bx,
@@ -89,11 +143,9 @@ export default function MatrixCanvas() {
             vy: 0,
             row: r,
             col: c,
-            // scatter target offsets
             scatterX: Math.cos(angle) * scatterDist,
             scatterY: Math.sin(angle) * scatterDist,
-            // row-based delay: top rows scatter first
-            scatterDelay: r / (rowsCount - 1), // 0 for top, 1 for bottom
+            scatterDelay: r / (rowsCount - 1),
           })
         }
       }
@@ -146,14 +198,15 @@ export default function MatrixCanvas() {
       for (let i = 0; i < dots.length; i++) {
         const dot = dots[i]
 
-        // Calculate scatter offset for this dot
-        // Dots at top (scatterDelay=0) start scattering first
-        // Each dot has a "window" of scatterProgress where it activates
-        const delayWindow = 0.4 // how much of the progress is "delay" range
-        const dotActivation = Math.max(0, Math.min(1,
-          (scatterProgress - dot.scatterDelay * delayWindow) / (1 - dot.scatterDelay * delayWindow)
-        ))
-        // Eased activation (ease-out cubic)
+        const delayWindow = 0.4
+        const dotActivation = Math.max(
+          0,
+          Math.min(
+            1,
+            (scatterProgress - dot.scatterDelay * delayWindow) /
+              (1 - dot.scatterDelay * delayWindow)
+          )
+        )
         const easedActivation = 1 - Math.pow(1 - dotActivation, 3)
 
         const scatterOffX = dot.scatterX * easedActivation
@@ -169,14 +222,12 @@ export default function MatrixCanvas() {
         const inSphere = dist < MOUSE_RADIUS && scatterProgress < 0.1
         const sphereFactor = inSphere ? 1 - dist / MOUSE_RADIUS : 0
 
-        // push dots away from cursor (only when not scattering)
         if (inSphere && dist > 0) {
           const force = sphereFactor * 3
           dot.vx += (dx / dist) * force
           dot.vy += (dy / dist) * force
         }
 
-        // spring to target (base + scatter offset)
         dot.vx += (targetX - dot.x) * 0.08
         dot.vy += (targetY - dot.y) * 0.08
         dot.vx *= 0.82
@@ -184,12 +235,14 @@ export default function MatrixCanvas() {
         dot.x += dot.vx
         dot.y += dot.vy
 
-        // size and brightness based on proximity + BK reveal on zoom out
-        const bkFactor = (bkMask && bkMask.has(`${dot.row},${dot.col}`)) ? (1 - zoom) / 0.3 : 0
+        const bkFactor =
+          bkMask && bkMask.has(`${dot.row},${dot.col}`)
+            ? (1 - zoom) / 0.3
+            : 0
         const radius = DOT_BASE_RADIUS + sphereFactor * 1.5 + bkFactor * 1.5
-        // Fade out as dots scatter away
         const scatterAlphaFade = 1 - easedActivation * 0.8
-        const alpha = (0.12 + sphereFactor * 0.4 + bkFactor * 0.6) * scatterAlphaFade
+        const alpha =
+          (0.12 + sphereFactor * 0.4 + bkFactor * 0.6) * scatterAlphaFade
 
         if (alpha > 0.01) {
           ctx.beginPath()
@@ -199,6 +252,9 @@ export default function MatrixCanvas() {
         }
       }
 
+      // Draw GitHub Activity Graph
+      drawGitHubGraph(ctx, w, h, frame)
+
       // draw text (always visible)
       {
         const centerY = h / 2
@@ -207,7 +263,6 @@ export default function MatrixCanvas() {
 
         const currentLang = langRef.current
 
-        // Responsive font sizes
         const nameFontSize = Math.min(56, w * 0.08)
         const greetingFontSize = Math.min(24, w * 0.04)
         const roleFontSize = Math.min(20, w * 0.035)
@@ -215,7 +270,11 @@ export default function MatrixCanvas() {
         // greeting
         ctx.font = `300 ${greetingFontSize}px system-ui, sans-serif`
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-        ctx.fillText(t(currentLang, 'greeting'), w / 2, centerY - nameFontSize * 0.8)
+        ctx.fillText(
+          t(currentLang, 'greeting'),
+          w / 2,
+          centerY - nameFontSize * 0.8
+        )
 
         // name
         ctx.font = `bold ${nameFontSize}px system-ui, sans-serif`
@@ -225,7 +284,11 @@ export default function MatrixCanvas() {
         // role
         ctx.font = `300 ${roleFontSize}px system-ui, sans-serif`
         ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'
-        ctx.fillText(t(currentLang, 'role'), w / 2, centerY + nameFontSize * 0.8)
+        ctx.fillText(
+          t(currentLang, 'role'),
+          w / 2,
+          centerY + nameFontSize * 0.8
+        )
 
         ctx.textAlign = 'left'
         ctx.textBaseline = 'top'
@@ -244,6 +307,117 @@ export default function MatrixCanvas() {
       ctx.restore()
 
       animId = requestAnimationFrame(draw)
+    }
+
+    function drawGitHubGraph(ctx, w, h, frame) {
+      const ghData = githubDataRef.current
+      if (!ghData) return
+
+      const { weeks, maxCount } = ghData
+
+      // Graph positioning — bottom area of the canvas, centered
+      const cellSize = Math.max(6, Math.min(12, w * 0.009))
+      const cellGap = Math.max(2, cellSize * 0.25)
+      const totalCellSize = cellSize + cellGap
+
+      const numWeeks = weeks.length
+      const numDays = 7
+
+      const graphWidth = numWeeks * totalCellSize
+      const graphHeight = numDays * totalCellSize
+
+      const startX = (w - graphWidth) / 2
+      const startY = h * 0.72
+
+      // Subtle label
+      ctx.save()
+      ctx.font = `300 ${Math.max(10, cellSize)}px system-ui, sans-serif`
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'bottom'
+      ctx.fillText('GitHub Activity', w / 2, startY - cellSize)
+      ctx.restore()
+
+      // Draw cells
+      for (let weekIdx = 0; weekIdx < numWeeks; weekIdx++) {
+        const week = weeks[weekIdx]
+        for (let dayIdx = 0; dayIdx < week.length; dayIdx++) {
+          const count = week[dayIdx]
+          const x = startX + weekIdx * totalCellSize
+          const y = startY + dayIdx * totalCellSize
+
+          // Intensity level (0-4 like GitHub)
+          const intensity = count === 0 ? 0 : Math.min(4, Math.ceil((count / maxCount) * 4))
+
+          // Color based on intensity — matrix green theme
+          let r, g, b, a
+          switch (intensity) {
+            case 0:
+              r = 255; g = 255; b = 255; a = 0.04
+              break
+            case 1:
+              r = 0; g = 220; b = 100; a = 0.2
+              break
+            case 2:
+              r = 0; g = 220; b = 100; a = 0.4
+              break
+            case 3:
+              r = 0; g = 255; b = 100; a = 0.6
+              break
+            case 4:
+              r = 0; g = 255; b = 80; a = 0.85
+              break
+            default:
+              r = 255; g = 255; b = 255; a = 0.04
+          }
+
+          // Subtle pulse animation for active cells
+          if (intensity > 0) {
+            const pulse =
+              Math.sin(frame * 0.02 + weekIdx * 0.1 + dayIdx * 0.2) * 0.1
+            a = Math.min(1, a + pulse * intensity * 0.05)
+          }
+
+          // Mouse proximity glow effect
+          const cellCenterX = x + cellSize / 2
+          const cellCenterY = y + cellSize / 2
+          const dxMouse = cellCenterX - light.x
+          const dyMouse = cellCenterY - light.y
+          const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse)
+
+          if (distMouse < MOUSE_RADIUS * 1.5) {
+            const proximity = 1 - distMouse / (MOUSE_RADIUS * 1.5)
+            a = Math.min(1, a + proximity * 0.3)
+            if (intensity === 0) {
+              g = 220
+              b = 100
+              r = 0
+              a = proximity * 0.15
+            }
+          }
+
+          // Draw rounded rect (dot-style)
+          const cornerRadius = cellSize * 0.2
+          ctx.beginPath()
+          if (ctx.roundRect) {
+            ctx.roundRect(x, y, cellSize, cellSize, cornerRadius)
+          } else {
+            // Fallback for older browsers
+            ctx.moveTo(x + cornerRadius, y)
+            ctx.lineTo(x + cellSize - cornerRadius, y)
+            ctx.quadraticCurveTo(x + cellSize, y, x + cellSize, y + cornerRadius)
+            ctx.lineTo(x + cellSize, y + cellSize - cornerRadius)
+            ctx.quadraticCurveTo(x + cellSize, y + cellSize, x + cellSize - cornerRadius, y + cellSize)
+            ctx.lineTo(x + cornerRadius, y + cellSize)
+            ctx.quadraticCurveTo(x, y + cellSize, x, y + cellSize - cornerRadius)
+            ctx.lineTo(x, y + cornerRadius)
+            ctx.quadraticCurveTo(x, y, x + cornerRadius, y)
+            ctx.closePath()
+          }
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
+          ctx.fill()
+        }
+      }
     }
 
     function onMouseMove(e) {
@@ -266,7 +440,6 @@ export default function MatrixCanvas() {
     }
 
     function onWheel(e) {
-      // Phase 1: scrolling down zooms out (existing behavior)
       if (e.deltaY > 0) {
         if (zoom > 0.7) {
           e.preventDefault()
@@ -274,25 +447,20 @@ export default function MatrixCanvas() {
           zoom = Math.max(0.7, zoom)
           return
         }
-        // Phase 2: after zoom is at min, scatter dots
         if (scatterProgress < SCATTER_MAX) {
           e.preventDefault()
           scatterProgress += e.deltaY * 0.0012
           scatterProgress = Math.min(SCATTER_MAX, scatterProgress)
           return
         }
-        // Phase 3: scatter complete — let page scroll naturally
         return
       }
 
-      // Scrolling up: reverse the phases
       if (e.deltaY < 0) {
         const scrollTop = window.scrollY || document.documentElement.scrollTop
 
-        // If page is scrolled, let it scroll up naturally
         if (scrollTop > 0) return
 
-        // Phase 2 reverse: un-scatter dots
         if (scatterProgress > 0) {
           e.preventDefault()
           scatterProgress += e.deltaY * 0.0012
@@ -300,7 +468,6 @@ export default function MatrixCanvas() {
           return
         }
 
-        // Phase 1 reverse: zoom back in
         if (zoom < 1) {
           e.preventDefault()
           zoom -= e.deltaY * 0.0008

@@ -15,6 +15,7 @@ const translations = {
     navProjects: 'Проекты',
     navSkills: 'Навыки',
     navExperience: 'Опыт',
+    navGithub: 'GitHub',
     copied: 'Скопировано!',
     aboutTech: 'О технологии',
     level: 'уровень',
@@ -28,6 +29,10 @@ const translations = {
     frontend: 'Frontend',
     backend: 'Backend',
     dataDevops: 'Data & DevOps',
+    // github
+    githubRepos: 'Open Source',
+    githubReposSubtitle: 'Мои публичные репозитории на GitHub',
+    githubViewAll: 'Все репозитории',
     // experience
     experience: 'Опыт работы',
     experienceSubtitle: 'Коммерческая разработка',
@@ -117,6 +122,7 @@ const translations = {
     navProjects: 'Projects',
     navSkills: 'Skills',
     navExperience: 'Experience',
+    navGithub: 'GitHub',
     copied: 'Copied!',
     aboutTech: 'About technology',
     level: 'level',
@@ -130,6 +136,10 @@ const translations = {
     frontend: 'Frontend',
     backend: 'Backend',
     dataDevops: 'Data & DevOps',
+    // github
+    githubRepos: 'Open Source',
+    githubReposSubtitle: 'My public repositories on GitHub',
+    githubViewAll: 'All repositories',
     // experience
     experience: 'Experience',
     experienceSubtitle: 'Commercial development',
