@@ -14,11 +14,12 @@ export default function AuthModal({ initialMode = 'login', onClose }) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     function onKey(e) { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', onKey)
     return () => {
-      document.body.style.overflow = ''
+      document.body.style.overflow = prev
       document.removeEventListener('keydown', onKey)
     }
   }, [onClose])
