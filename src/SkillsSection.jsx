@@ -1,89 +1,35 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { useLang } from './LangContext'
 import { t } from './i18n'
 import './SkillsSection.css'
 import SkillModal from './SkillModal'
+import { usePortfolio } from './PortfolioContext'
 
-const CATEGORIES = [
-  {
-    id: 'all',
-    title: 'Все',
-    skills: [
-      { name: 'React', level: 95 },
-      { name: 'TypeScript', level: 90 },
-      { name: 'Next.js', level: 85 },
-      { name: 'Node.js', level: 90 },
-      { name: 'PostgreSQL', level: 85 },
-      { name: 'MySQL', level: 80 },
-      { name: 'Git', level: 90 },
-      { name: 'GitHub', level: 90 },
-      { name: 'GitLab', level: 85 },
-      { name: 'PHP', level: 80 },
-      { name: 'Laravel', level: 75 },
-      { name: 'Python', level: 70 },
-      { name: 'REST API', level: 95 },
-      { name: 'WebSocket', level: 80 },
-      { name: 'HTML', level: 95 },
-      { name: 'CSS / SCSS', level: 90 },
-      { name: 'Tailwind', level: 85 },
-      { name: 'Bootstrap', level: 80 },
-      { name: 'WordPress', level: 75 },
-      { name: 'React Native', level: 80 },
-      { name: 'Angular', level: 75 },
-      { name: 'Vue', level: 70 },
-      { name: 'Swagger', level: 85 },
-      { name: 'ZKP', level: 75 },
-    ],
-  },
-  {
-    id: 'frontend',
-    title: 'Frontend',
-    skills: [
-      { name: 'React', level: 95 },
-      { name: 'TypeScript', level: 90 },
-      { name: 'Next.js', level: 85 },
-      { name: 'Angular', level: 75 },
-      { name: 'Vue', level: 70 },
-      { name: 'React Native', level: 80 },
-      { name: 'HTML', level: 95 },
-      { name: 'CSS / SCSS', level: 90 },
-      { name: 'Tailwind', level: 85 },
-      { name: 'Bootstrap', level: 80 },
-    ],
-  },
-  {
-    id: 'backend',
-    title: 'Backend',
-    skills: [
-      { name: 'Node.js', level: 90 },
-      { name: 'PHP', level: 80 },
-      { name: 'Laravel', level: 75 },
-      { name: 'Python', level: 70 },
-      { name: 'REST API', level: 95 },
-      { name: 'WebSocket', level: 80 },
-      { name: 'WordPress', level: 75 },
-      { name: 'Swagger', level: 85 },
-      { name: 'ZKP', level: 75 },
-    ],
-  },
-  {
-    id: 'data',
-    title: 'Data & DevOps',
-    skills: [
-      { name: 'PostgreSQL', level: 85 },
-      { name: 'MySQL', level: 80 },
-      { name: 'Git', level: 90 },
-      { name: 'GitHub', level: 90 },
-      { name: 'GitLab', level: 85 },
-    ],
-  },
-]
+function buildCategories(skills) {
+  const byCat = {
+    frontend: [],
+    backend: [],
+    data: [],
+  }
+  for (const s of skills) {
+    const cat = byCat[s.category] ? s.category : 'frontend'
+    byCat[cat].push({ name: s.name, level: s.level, years: s.years })
+  }
+  return [
+    { id: 'all', skills: skills.map((s) => ({ name: s.name, level: s.level, years: s.years })) },
+    { id: 'frontend', skills: byCat.frontend },
+    { id: 'backend', skills: byCat.backend },
+    { id: 'data', skills: byCat.data },
+  ]
+}
 
 export default function SkillsSection() {
   const canvasRef = useRef(null)
   const wrapRef = useRef(null)
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedSkill, setSelectedSkill] = useState(null)
+  const { skills } = usePortfolio()
+  const CATEGORIES = useMemo(() => buildCategories(skills), [skills])
   const skillsRef = useRef(CATEGORIES[0].skills)
   const onSkillClickRef = useRef(null)
   const { lang } = useLang()
@@ -91,12 +37,12 @@ export default function SkillsSection() {
   // keep latest setter accessible from canvas effect
   onSkillClickRef.current = (skill) => setSelectedSkill(skill)
 
-  // update skills ref when category changes
+  // update skills ref when category or dataset changes
   useEffect(() => {
-    skillsRef.current = CATEGORIES.find((c) => c.id === activeCategory).skills
+    skillsRef.current = CATEGORIES.find((c) => c.id === activeCategory)?.skills || []
     // trigger rebuild via custom event
     canvasRef.current?.dispatchEvent(new Event('rebuild'))
-  }, [activeCategory])
+  }, [activeCategory, CATEGORIES])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -153,6 +99,7 @@ export default function SkillsSection() {
         return {
           name: s.name,
           level: s.level,
+          years: s.years,
           baseX: x,
           baseY: y,
           x,
@@ -353,6 +300,7 @@ export default function SkillsSection() {
           onSkillClickRef.current?.({
             name: n.name,
             level: n.level,
+            years: n.years,
             clickX: e.clientX,
             clickY: e.clientY,
           })

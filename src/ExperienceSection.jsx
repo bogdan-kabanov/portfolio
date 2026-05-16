@@ -2,42 +2,24 @@ import { useEffect, useRef } from 'react'
 import { useLang } from './LangContext'
 import { t } from './i18n'
 import './ExperienceSection.css'
+import { usePortfolio } from './PortfolioContext'
 
-const experienceData = [
-  {
-    company: 'Union',
-    roleKey: 'expUnion1Role',
-    duration: '1',
-    durationKey: 'year1',
-  },
-  {
-    company: 'Union',
-    roleKey: 'expUnion2Role',
-    duration: '2',
-    durationKey: 'year24',
-  },
-  {
-    company: 'Bastaxi',
-    roleKey: 'expBastaxiRole',
-    duration: '1',
-    durationKey: 'year1',
-  },
-  {
-    company: 'BlockMind',
-    roleKey: 'expBlockmindRole',
-    duration: '1',
-    durationKey: 'year1',
-  },
-  {
-    company: 'KrotMiner',
-    roleKey: 'expKrotminerRole',
-    duration: '1',
-    durationKey: 'year1',
-  },
-]
+function durationKey(years) {
+  if (years <= 1) return 'year1'
+  if (years < 5) return 'year24'
+  return 'year5'
+}
+
+function resolveRole(item, lang) {
+  if (item.role && typeof item.role === 'object') {
+    return item.role[lang] || item.role.ru || item.role.en || ''
+  }
+  return null
+}
 
 export default function ExperienceSection() {
   const { lang } = useLang()
+  const { experience } = usePortfolio()
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -130,18 +112,22 @@ export default function ExperienceSection() {
       <p className="experience-section__subtitle">{t(lang, 'experienceSubtitle')}</p>
 
       <div className="experience-section__timeline">
-        {experienceData.map((item, i) => (
-          <div className="experience-card" key={i}>
-            <div className="experience-card__dot" />
-            <div className="experience-card__content">
-              <span className="experience-card__company">{item.company}</span>
-              <span className="experience-card__role">{t(lang, item.roleKey)}</span>
-              <span className="experience-card__duration">
-                {item.duration} {t(lang, item.durationKey)}
-              </span>
+        {experience.map((item, i) => {
+          const role = resolveRole(item, lang) || (item.roleKey ? t(lang, item.roleKey) : '')
+          const years = typeof item.durationYears === 'number' ? item.durationYears : Number(item.duration) || 1
+          return (
+            <div className="experience-card" key={item.id || i}>
+              <div className="experience-card__dot" />
+              <div className="experience-card__content">
+                <span className="experience-card__company">{item.company}</span>
+                <span className="experience-card__role">{role}</span>
+                <span className="experience-card__duration">
+                  {years} {t(lang, durationKey(years))}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )

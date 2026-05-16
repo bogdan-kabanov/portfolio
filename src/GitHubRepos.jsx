@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useLang } from './LangContext'
 import { t } from './i18n'
 import './GitHubRepos.css'
+import { usePortfolio } from './PortfolioContext'
 
-const GITHUB_USERNAME = 'bogdan-kabanov'
+const GITHUB_USERNAME_DEFAULT = 'bogdan-kabanov'
 
 // Language colors (GitHub style)
 const LANG_COLORS = {
@@ -30,18 +31,23 @@ const LANG_COLORS = {
 
 export default function GitHubRepos() {
   const { lang } = useLang()
+  const { profile } = usePortfolio()
+  const username = profile?.githubUsername || GITHUB_USERNAME_DEFAULT
   const [repos, setRepos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
     fetchRepos()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username])
 
   async function fetchRepos() {
+    setLoading(true)
+    setError(false)
     try {
       const response = await fetch(
-        `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=30&type=owner`
+        `https://api.github.com/users/${username}/repos?sort=updated&per_page=30&type=owner`
       )
       if (!response.ok) throw new Error('Failed to fetch')
       const data = await response.json()
@@ -172,7 +178,7 @@ export default function GitHubRepos() {
       )}
 
       <a
-        href={`https://github.com/${GITHUB_USERNAME}?tab=repositories`}
+        href={`https://github.com/${username}?tab=repositories`}
         target="_blank"
         rel="noopener noreferrer"
         className="github-repos__view-all"

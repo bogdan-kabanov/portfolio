@@ -18,27 +18,27 @@ export default function Pagination() {
 
   useEffect(() => {
     function onScroll() {
-      const scrollY = window.scrollY
-      const vh = window.innerHeight
-      if (scrollY < vh * 0.5) {
-        setActive(0)
-      } else if (scrollY < vh * 1.5) {
-        setActive(1)
-      } else if (scrollY < vh * 2.5) {
-        setActive(2)
-      } else if (scrollY < vh * 3.5) {
-        setActive(3)
-      } else {
-        setActive(4)
+      // Use real section offsets so layout changes (post detail, project detail)
+      // don't break the active-dot logic.
+      const scrollY = window.scrollY + window.innerHeight * 0.4
+      let next = 0
+      for (let i = 0; i < sections.length; i++) {
+        const el = document.getElementById(sections[i].id)
+        if (!el) continue
+        if (el.offsetTop <= scrollY) next = i
       }
+      setActive(next)
     }
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   function scrollTo(index) {
-    const target = index * window.innerHeight
-    window.scrollTo({ top: target, behavior: 'smooth' })
+    const el = document.getElementById(sections[index].id)
+    if (el) {
+      window.scrollTo({ top: el.offsetTop, behavior: 'smooth' })
+    }
   }
 
   return (

@@ -2,24 +2,28 @@ import { useState } from 'react'
 import { useLang } from './LangContext'
 import { t } from './i18n'
 import './SocialLinks.css'
-
-const PHONE = '+7 (962) 888-14-37'
-const EMAIL = 'bogdankabanovprof@gmail.com'
+import { usePortfolio } from './PortfolioContext'
 
 export default function SocialLinks() {
   const [copiedPhone, setCopiedPhone] = useState(false)
   const [copiedEmail, setCopiedEmail] = useState(false)
   const { lang } = useLang()
+  const { profile } = usePortfolio()
+
+  const phone = profile?.phone || '+7 (962) 888-14-37'
+  const email = profile?.email || 'bogdankabanovprof@gmail.com'
+  const github = profile?.github || 'https://github.com/bogdan-kabanov'
+  const telegram = profile?.telegram || 'https://t.me/bogdan_kabanov'
 
   function handleCopyPhone() {
-    navigator.clipboard.writeText(PHONE).then(() => {
+    navigator.clipboard.writeText(phone).then(() => {
       setCopiedPhone(true)
       setTimeout(() => setCopiedPhone(false), 2000)
     })
   }
 
   function handleCopyEmail() {
-    navigator.clipboard.writeText(EMAIL).then(() => {
+    navigator.clipboard.writeText(email).then(() => {
       setCopiedEmail(true)
       setTimeout(() => setCopiedEmail(false), 2000)
     })
@@ -28,7 +32,7 @@ export default function SocialLinks() {
   return (
     <aside className="social-links" aria-label={lang === 'ru' ? 'Контакты' : 'Contacts'}>
       <a
-        href="https://github.com/bogdan-kabanov"
+        href={github}
         target="_blank"
         rel="noopener noreferrer"
         className="social-links__item"
@@ -40,7 +44,7 @@ export default function SocialLinks() {
       </a>
 
       <a
-        href="https://t.me/bogdan_kabanov"
+        href={telegram}
         target="_blank"
         rel="noopener noreferrer"
         className="social-links__item"
@@ -58,7 +62,7 @@ export default function SocialLinks() {
           </svg>
         </span>
         <span className="social-links__email-text">
-          {copiedEmail ? t(lang, 'copied') : EMAIL}
+          {copiedEmail ? t(lang, 'copied') : email}
         </span>
       </button>
 
@@ -69,7 +73,7 @@ export default function SocialLinks() {
           </svg>
         </span>
         <span className="social-links__phone-number">
-          {copiedPhone ? t(lang, 'copied') : PHONE}
+          {copiedPhone ? t(lang, 'copied') : phone}
         </span>
       </button>
     </aside>

@@ -171,11 +171,15 @@ export default function SkillModal({ skill, onClose }) {
     el.style.setProperty('--origin-y', originY + '%')
   }, [skill])
 
-  const info = SKILL_INFO[skill.name] || {
+  const baseInfo = SKILL_INFO[skill.name] || {
     descKey: 'descSoon',
     years: 1,
     projects: [],
   }
+  // Override years from API-supplied skill if present (don't mutate the shared map).
+  const info = typeof skill.years === 'number' && skill.years > 0
+    ? { ...baseInfo, years: skill.years }
+    : baseInfo
 
   const description = t(lang, info.descKey)
   const projects = info.projects.map((p) =>

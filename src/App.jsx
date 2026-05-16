@@ -11,76 +11,35 @@ import SkillsSection from './SkillsSection'
 import LangSwitch from './LangSwitch'
 import ExperienceSection from './ExperienceSection'
 import GitHubRepos from './GitHubRepos'
+import Blog from './Blog'
 import Footer from './Footer'
 import { useLang } from './LangContext'
 import { t } from './i18n'
-
-const projectsData = [
-  {
-    titleKey: 'krotminerTitle',
-    descKey: 'krotminerDesc',
-    image: null,
-    tech: ['React', 'TypeScript', 'Node.js', 'WebSocket', 'Telegram Mini App', 'Canvas API', 'PostgreSQL', 'REST API', 'CSS Animations', 'Docker'],
-  },
-  {
-    titleKey: 'daoTitle',
-    descKey: 'daoDesc',
-    image: null,
-    tech: ['React Native', 'TypeScript', 'Node.js', 'ZKP (zk-SNARKs)', 'Swagger', 'PostgreSQL', 'REST API', 'WebSocket', 'Solidity'],
-  },
-  {
-    titleKey: 'bastaxiTitle',
-    descKey: 'bastaxiDesc',
-    image: null,
-    tech: ['Angular', 'React', 'TypeScript', 'GraphQL', 'Apollo Client', 'Node.js', 'PostgreSQL', 'SCSS'],
-  },
-  {
-    titleKey: 'unionTitle',
-    descKey: 'unionDesc',
-    image: null,
-    tech: ['React', 'TypeScript', 'Node.js', 'Telegram Bot API', 'Telegram Mini App', 'PostgreSQL', 'REST API'],
-  },
-  {
-    titleKey: 'blockmindTitle',
-    descKey: 'blockmindDesc',
-    image: import.meta.env.BASE_URL + 'blockmind/01-dashboard.png',
-    images: [
-      import.meta.env.BASE_URL + 'blockmind/01-dashboard.png',
-      import.meta.env.BASE_URL + 'blockmind/02-trading.png',
-      import.meta.env.BASE_URL + 'blockmind/03-screen.png',
-      import.meta.env.BASE_URL + 'blockmind/04-screen.png',
-      import.meta.env.BASE_URL + 'blockmind/05-screen.png',
-      import.meta.env.BASE_URL + 'blockmind/06-screen.png',
-    ],
-    tech: ['React', 'Node.js', 'TypeScript', 'WebSocket', 'PostgreSQL', 'Docker', 'GitLab CI/CD', 'REST API', 'HTML', 'CSS/SCSS', 'AI Integration', 'Middleware'],
-  },
-  {
-    titleKey: 'floraTitle',
-    descKey: 'floraDesc',
-    image: null,
-    tech: ['Laravel', 'PHP', 'MySQL', 'Eloquent ORM', 'Blade', 'HTML', 'CSS', 'Bootstrap', 'JavaScript', 'REST API'],
-  },
-  {
-    titleKey: 'carautoTitle',
-    descKey: 'carautoDesc',
-    image: null,
-    tech: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS/SCSS', 'REST API', 'Responsive Design'],
-  },
-]
+import { usePortfolio, resolveLocalized } from './PortfolioContext'
 
 function App() {
   const [selectedProject, setSelectedProject] = useState(null)
   const { lang } = useLang()
+  const { projects: rawProjects } = usePortfolio()
 
   useEffect(() => {
     document.documentElement.lang = lang
     document.title = t(lang, 'pageTitle')
   }, [lang])
 
-  const projects = projectsData.map((p) => ({
+  // Reset selection if the dataset shrinks (e.g. project deleted while viewing).
+  useEffect(() => {
+    if (selectedProject !== null && selectedProject >= rawProjects.length) {
+      setSelectedProject(null)
+    }
+  }, [rawProjects.length, selectedProject])
+
+  const projects = rawProjects.map((p) => ({
     ...p,
-    title: t(lang, p.titleKey),
-    description: t(lang, p.descKey),
+    // unify image fields used by ProjectCard / ProjectDetail
+    image: p.cover || (p.images && p.images[0]) || null,
+    title: resolveLocalized(p, lang, 'title', t),
+    description: resolveLocalized(p, lang, 'description', t),
   }))
 
   return (
@@ -116,7 +75,7 @@ function App() {
               <div className="projects-grid" role="list">
                 {projects.map((p, i) => (
                   <ProjectCard
-                    key={p.titleKey}
+                    key={p.id || p.titleKey || i}
                     title={p.title}
                     image={p.image}
                     onClick={() => setSelectedProject(i)}
@@ -140,6 +99,7 @@ function App() {
       </main>
 
       <Footer />
+      <Blog />
     </div>
   )
 }

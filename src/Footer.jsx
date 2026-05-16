@@ -2,16 +2,20 @@ import { useState } from 'react'
 import { useLang } from './LangContext'
 import { t } from './i18n'
 import './Footer.css'
-
-const EMAIL = 'bogdankabanovprof@gmail.com'
+import { usePortfolio } from './PortfolioContext'
 
 export default function Footer() {
   const { lang } = useLang()
+  const { profile } = usePortfolio()
   const year = new Date().getFullYear()
   const [copied, setCopied] = useState(false)
 
+  const email = profile?.email || 'bogdankabanovprof@gmail.com'
+  const github = profile?.github || 'https://github.com/bogdan-kabanov'
+  const telegram = profile?.telegram || 'https://t.me/bogdan_kabanov'
+
   function handleCopyEmail() {
-    navigator.clipboard.writeText(EMAIL).then(() => {
+    navigator.clipboard.writeText(email).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
@@ -27,7 +31,7 @@ export default function Footer() {
 
         <address className="footer__center">
           <a
-            href="https://github.com/bogdan-kabanov"
+            href={github}
             target="_blank"
             rel="noopener noreferrer"
             className="footer__link"
@@ -36,7 +40,7 @@ export default function Footer() {
           </a>
           <span className="footer__divider" aria-hidden="true">·</span>
           <a
-            href="https://t.me/bogdan_kabanov"
+            href={telegram}
             target="_blank"
             rel="noopener noreferrer"
             className="footer__link"
@@ -45,7 +49,7 @@ export default function Footer() {
           </a>
           <span className="footer__divider" aria-hidden="true">·</span>
           <button type="button" className="footer__email" onClick={handleCopyEmail}>
-            {copied ? t(lang, 'copied') : EMAIL}
+            {copied ? t(lang, 'copied') : email}
           </button>
         </address>
 
