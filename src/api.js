@@ -1,6 +1,6 @@
 // API base — set via Vite env (VITE_API_URL). When empty/undefined the client
 // falls back to bundled static defaults so the site keeps working stand-alone.
-export const API_URL = import.meta.env.VITE_API_URL || ''
+export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
 
 const TOKEN_KEY = 'pf_user_token'
 
