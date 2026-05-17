@@ -311,6 +311,21 @@
   line-height: 1.55;
 }
 .blog-detail__content strong { color: #fff; }
+.blog-detail__content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 18px 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.blog-detail__content blockquote {
+  margin: 0 0 18px;
+  padding: 4px 16px;
+  border-left: 3px solid rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
 
 @media (max-width: 768px) {
   .blog-fab { bottom: 16px; right: 16px; padding: 10px 16px 10px 14px; font-size: 13px; }

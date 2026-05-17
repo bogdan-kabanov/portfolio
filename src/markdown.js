@@ -1,7 +1,8 @@
 // Tiny safe markdown → HTML renderer.
 // Supports headings (#..######), bold (**), italic (*), inline `code`,
 // fenced ```code blocks```, unordered (- *) and ordered (1.) lists,
-// links [text](url), and paragraphs. All HTML in input is escaped first.
+// blockquotes (>), images ![alt](src), links [text](url), and paragraphs.
+// All HTML in input is escaped first.
 
 function escapeHtml(s) {
   return s
@@ -19,12 +20,19 @@ function inline(text) {
   out = out.replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>')
   // 3) italic
   out = out.replace(/(^|[^*])\*([^*]+?)\*(?!\*)/g, '$1<em>$2</em>')
-  // 4) links — only http(s)/mailto/relative for safety
+  // 4) images — only http(s) or root-relative for safety. Run before links so
+  //    the `![..](..)` syntax isn't swallowed by the link regex below.
+  out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+    const safe = /^(https?:\/\/|\/)/i.test(src) ? src : ''
+    if (!safe) return ''
+    return `<img src="${safe}" alt="${alt}" loading="lazy" />`
+  })
+  // 5) links — only http(s)/mailto/relative for safety
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, href) => {
     const safe = /^(https?:\/\/|mailto:|\/)/i.test(href) ? href : '#'
     return `<a href="${safe}" target="_blank" rel="noopener noreferrer">${t}</a>`
   })
-  // 5) restore inline code
+  // 6) restore inline code
   out = out.replace(/\u0001CODE([^\u0001]+)\u0001/g, (_, c) => `<code>${decodeURIComponent(c)}</code>`)
   return out
 }
@@ -58,6 +66,17 @@ export function renderMarkdown(src) {
       const level = h[1].length
       out.push(`<h${level}>${inline(h[2])}</h${level}>`)
       i++
+      continue
+    }
+
+    // blockquote
+    if (/^\s*>\s?/.test(line)) {
+      const buf = []
+      while (i < lines.length && /^\s*>\s?/.test(lines[i])) {
+        buf.push(lines[i].replace(/^\s*>\s?/, ''))
+        i++
+      }
+      out.push(`<blockquote>${inline(buf.join(' '))}</blockquote>`)
       continue
     }
 
@@ -95,7 +114,7 @@ export function renderMarkdown(src) {
     while (
       i < lines.length &&
       !/^\s*$/.test(lines[i]) &&
-      !/^(#{1,6}\s|```|\s*[-*]\s|\s*\d+\.\s)/.test(lines[i])
+      !/^(#{1,6}\s|```|\s*[-*]\s|\s*\d+\.\s|\s*>\s?)/.test(lines[i])
     ) {
       buf.push(lines[i])
       i++
